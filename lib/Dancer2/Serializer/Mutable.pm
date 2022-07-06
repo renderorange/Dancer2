@@ -8,6 +8,7 @@ use Module::Runtime 'require_module';
 with 'Dancer2::Core::Role::Serializer';
 
 use constant DEFAULT_CONTENT_TYPE => 'application/json';
+use constant DEFAULT_SERIALIZER   => 'JSON';
 
 has '+content_type' => ( default => DEFAULT_CONTENT_TYPE() );
 
@@ -102,9 +103,9 @@ sub _get_content_type {
         }
     }
 
-    # If none if found, return the default, 'JSON'.
+    # If none is found, return the default, 'JSON'.
     $self->set_content_type( DEFAULT_CONTENT_TYPE() );
-    return 'JSON';
+    return DEFAULT_SERIALIZER();
 }
 
 1;
