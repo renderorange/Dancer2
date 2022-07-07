@@ -10,7 +10,18 @@ with 'Dancer2::Core::Role::Serializer';
 use constant DEFAULT_CONTENT_TYPE => 'application/json';
 use constant DEFAULT_SERIALIZER   => 'JSON';
 
-has '+content_type' => ( default => DEFAULT_CONTENT_TYPE() );
+has '+content_type' => (
+    default => sub {
+        my $self = shift;
+
+        if ( my $default = $self->config->{default} ) {
+            my ( $content_type ) = keys %{$default};
+            return $content_type;
+        }
+
+        return DEFAULT_CONTENT_TYPE();
+    }
+);
 
 my $serializer = {
     'YAML'   => {
@@ -101,6 +112,13 @@ sub _get_content_type {
                 }
             }
         }
+    }
+
+    # Load the default content type and serializer mapping from the config.
+    if ( my $default = $self->config->{default} ) {
+        my ( $content_type ) = keys %{$default};
+        $self->set_content_type( $content_type );
+        return $default->{$content_type};
     }
 
     # If none is found, return the default, 'JSON'.
